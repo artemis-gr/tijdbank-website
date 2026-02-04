@@ -1,9 +1,49 @@
+@font-face {
+  font-family: "Metropolis";
+  src: url("../fonts/metropolis/Metropolis-Thin.woff2") format("woff2");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Metropolis";
+  src: url("../fonts/metropolis/Metropolis-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Metropolis";
+  src: url("../fonts/metropolis/Metropolis-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Metropolis";
+  src: url("../fonts/metropolis/Metropolis-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Metropolis";
+  src: url("../fonts/metropolis/Metropolis-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* colors */
   --c-black: #000;
   --c-white: #fff;
   --c-lime: limegreen;
-  --c-grey: #d9d9d9;
+  --c-grey: #aab3de;
   --c-orange: orange;
 
   /* layout */
@@ -13,19 +53,23 @@
   --radius: 14px;
 
   /* header */
-  --header-border: 2px solid var(--c-black);
+  --header-border: none;
+  --header-bg: var(--c-grey);
+  --header-h: 92px;
 }
 
 /* --- base --- */
 * {
   box-sizing: border-box;
 }
-html {
-  scroll-behavior: smooth;
+html, body{
+  scroll-snap-type: y proximity;   /* start with proximity; mandatory is harsher */
+  scroll-padding-top: var(--header-h);
 }
 body {
   margin: 0;
   font-family:
+    "Metropolis",
     system-ui,
     -apple-system,
     Segoe UI,
@@ -41,8 +85,9 @@ a {
 }
 
 /* Prevent anchor targets from hiding under sticky header */
-section {
-  scroll-margin-top: 92px;
+.section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .container {
@@ -51,13 +96,17 @@ section {
   padding: 0 var(--pad);
 }
 
+.container--wide {
+  max-width: 110rem; /* or 100rem, tweak to taste */
+}
+
 /* --- header (mobile-first) --- */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--c-white);
-  border-bottom: var(--header-border);
+  background: var(--header-bg);
+  transition: background-color 200ms ease;
 }
 
 .site-header__inner {
@@ -70,22 +119,16 @@ section {
 }
 
 .brand {
-  font-weight: 900;
-  letter-spacing: 0.2px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  display: block;
   text-decoration: none;
 }
-.brand__dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  background: var(--c-lime);
-  border: 2px solid var(--c-black);
-  display: inline-block;
+.brand__img {
+  display: block;
+  height: 56px; /* tweak to taste */
+  width: auto;
+  max-width: 210px; /* prevents it taking over */
+  object-fit: contain;
 }
-
 /* desktop nav hidden by default (mobile-first) */
 .nav {
   display: none;
@@ -94,7 +137,7 @@ section {
 }
 .nav a {
   text-decoration: none;
-  font-weight: 650;
+  font-weight: 500;
   padding: 0.4rem 0.2rem;
 }
 .nav a:hover {
@@ -110,7 +153,7 @@ section {
 .menu summary {
   cursor: pointer;
   list-style: none;
-  font-weight: 800;
+  font-weight: 700;
   border: var(--header-border);
   padding: 0.45rem 0.65rem;
   border-radius: var(--radius);
@@ -142,9 +185,61 @@ section {
   background: var(--c-grey);
 }
 
+.hero {
+  padding-top: 0; /* let layout handle spacing */
+}
+
+.hero .hero__inner{
+  min-height: calc(100dvh - var(--header-h) - 2.25rem); /* accounts for section padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.hero__illustration{
+  margin-top: auto; /* pushes it to the bottom */
+}
+
+.hero__kicker {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+
+.hero__logo {
+  max-width: min(1000px, 92vw);
+  height: auto;
+  filter: saturate(1.45) contrast(1.2);
+}
+
+.hero__tagline {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 1.05rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
 /* --- sections --- */
-.section {
-  padding: 2.25rem 0;
+.section{
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;        /* “always” can feel aggressive on short sections */
+  scroll-margin-top: var(--header-h);
+
+  min-height: 100dvh;              /* simpler + more stable than calc(100dvh - header) */
+  padding-top: calc(2.25rem + var(--header-h));
+  padding-bottom: 2.25rem;
+}
+.section > .container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .section--grey {
   background: var(--c-grey);
@@ -218,11 +313,23 @@ section {
   :root {
     --pad: 1.25rem;
     --gap: 1rem;
+    --header-h: 200px;
   }
+
+  .site-header__inner {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
   /* show desktop nav, hide mobile menu */
   .nav {
     display: flex;
+    margin-left: auto;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
   }
+
   .menu {
     display: none;
   }
@@ -237,6 +344,10 @@ section {
   .qr {
     grid-template-columns: 260px 1fr;
     align-items: center;
+  }
+  .brand__img {
+    height: 220px;
+    max-width: 920px;
   }
 }
 
