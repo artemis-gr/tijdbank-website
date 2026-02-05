@@ -14,21 +14,19 @@
     />
   </head>
 
-  <body>
-    <a id="top"></a>
+  <body id="top">
+    <a class="brand brand--floating" href="#top" aria-label="Terug naar boven">
+      <img
+        class="brand__img"
+        src="images/Eenuurvooreenuur.png"
+        alt="Een uur voor een uur"
+        decoding="async"
+      />
+    </a>
 
     <header class="site-header">
       <div class="container container--wide">
         <div class="site-header__inner">
-          <a class="brand" href="#top" aria-label="Terug naar boven">
-            <img
-              class="brand__img"
-              src="images/Eenuurvooreenuur.png"
-              alt="Een uur voor een uur"
-              decoding="async"
-            />
-          </a>
-
           <nav class="nav" aria-label="Hoofdnavigatie">
             <a href="#wat">Wat is de Tijdbank?</a>
             <a href="#hoe">Hoe werkt het?</a>
@@ -39,13 +37,13 @@
 
           <details class="menu">
             <summary>Menu</summary>
-            <div class="menu__panel" role="menu" aria-label="Menu">
+            <nav class="menu__panel" aria-label="Mobiel menu">
               <a href="#wat">Wat is de Tijdbank?</a>
               <a href="#hoe">Hoe werkt het?</a>
               <a href="#richtlijnen">Richtlijnen</a>
               <a href="#meld">Meld je aan!</a>
               <a href="#contact">Contact</a>
-            </div>
+            </nav>
           </details>
         </div>
       </div>
@@ -57,15 +55,14 @@
         class="section section--grey hero"
         data-bg="--c-grey"
       >
-        <div class="container hero__inner">
-          <img
-            class="hero__logo"
-            src="images/Welkombijdetijdbank-new.png"
-            alt="De Tijdbank"
-            loading="eager"
-            decoding="async"
-          />
-
+        <div class="container container--wide hero__inner">
+          <div class="hero__logo-wrap">
+            <img
+              class="hero__logo"
+              src="images/Welkombijdetijdbank-new.png"
+              alt="De Tijdbank"
+            />
+          </div>
           <img
             class="hero__illustration"
             src="images/illustratie.png"
@@ -76,26 +73,23 @@
           />
         </div>
       </section>
+
       <section id="wat" class="section section--orange" data-bg="--c-orange">
-        <div class="container">
-          <h1 class="section__title">Wat is de Tijdbank?</h1>
-          <p class="section__lead">
-            (Korte intro tekst hier. Leg uit wat jullie doen in 2–4 zinnen.)
-          </p>
-          <div class="card">
-            <strong>Tip:</strong> hou dit stuk super scanbaar. Mensen lezen op
-            mobiel vooral koppen + eerste zinnen.
+        <div class="container container--text">
+          <div class="prose">
+            <h1 class="section__title">Wat is de Tijdbank?</h1>
+            <p class="section__lead">...</p>
           </div>
+          <div class="card">...</div>
         </div>
       </section>
 
       <section id="hoe" class="section section--grey" data-bg="--c-grey">
-        <div class="container">
-          <h2 class="section__title">Hoe werkt het?</h2>
-          <p class="section__lead">
-            (Stap-voor-stap uitleg. Je kunt later hier een eenvoudige lijst van
-            maken.)
-          </p>
+        <div class="container container--text">
+          <div class="prose">
+            <h2 class="section__title">Hoe werkt het?</h2>
+            <p class="section__lead">...</p>
+          </div>
         </div>
       </section>
 
@@ -104,53 +98,62 @@
         class="section section--orange"
         data-bg="--c-orange"
       >
-        <div class="container">
-          <h2 class="section__title">Richtlijnen</h2>
-          <p class="section__lead">
-            (Belangrijkste afspraken. Denk aan veiligheid, respect, tijd,
-            communicatie.)
-          </p>
+        <div class="container container--text">
+          <div class="prose">
+            <h2 class="section__title">Richtlijnen</h2>
+            <p class="section__lead">
+              (Belangrijkste afspraken. Denk aan veiligheid, respect, tijd,
+              communicatie.)
+            </p>
+          </div>
         </div>
       </section>
 
       <section id="meld" class="section section--grey" data-bg="--c-grey">
-        <div class="container">
-          <h2 class="section__title">Meld je aan!</h2>
+        <div class="container container--text">
+          <div class="prose">
+            <h2 class="section__title">Meld je aan!</h2>
+          </div>
 
           <div class="card qr">
             <div class="qr__img">
               QR CODE
               <!-- later: <img src="qr.png" alt="QR-code om je aan te melden" /> -->
             </div>
+
             <div>
               <p class="section__lead" style="margin-top: 0">
                 Scan de QR-code om je aan te melden. (Of plaats hier een korte
                 uitleg + link.)
               </p>
-              <a class="btn" href="#" target="_blank" rel="noopener"
-                >Open aanmeldlink</a
-              >
+              <a class="btn" href="#" target="_blank" rel="noopener">
+                Open aanmeldlink
+              </a>
             </div>
           </div>
         </div>
       </section>
 
       <section id="contact" class="section section--grey" data-bg="--c-grey">
-        <div class="container">
-          <h2 class="section__title">Contact</h2>
-          <p class="section__lead">
-            Email: <a href="mailto:">…</a><br />
-            (Of een simpel contactblok met 1–2 regels.)
-          </p>
+        <div class="container container--text">
+          <div class="prose">
+            <h2 class="section__title">Contact</h2>
+            <p class="section__lead">
+              Email: <a href="mailto:info@tijdbank.nl">info@tijdbank.nl</a
+              ><br />
+              (Of een simpel contactblok met 1–2 regels.)
+            </p>
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="container">
+      <div class="container container--wide">
         <p class="footer__small">© Tijdbank — lokaal initiatief</p>
       </div>
     </footer>
+
     <script src="js/main.js"></script>
   </body>
 </html>
