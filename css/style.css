@@ -47,8 +47,9 @@
   --radius: 14px;
   --gutter: clamp(0.75rem, 2vw, 1rem);
   --max-wide: 120rem;
-  --max-text: 72rem;
-  --max-prose: 70ch;
+  --max-text: 70rem;
+  --max-prose: 40ch;
+  --max-prose-ol: 45ch;
 
   /* scroll */
   --snap-offset: 0px;
@@ -70,8 +71,12 @@ html {
 }
 
 @media (max-width: 719px) {
-  html { scroll-snap-type: none !important; }
-  .section { scroll-snap-align: none !important; }
+  html {
+    scroll-snap-type: none !important;
+  }
+  .section {
+    scroll-snap-align: none !important;
+  }
 }
 
 body {
@@ -112,6 +117,51 @@ a {
   margin-inline: auto;
 }
 
+.prose--ol {
+  max-width: var(--max-prose-ol);
+}
+
+.prose .steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+
+  display: grid;
+  gap: 1rem;
+  counter-reset: step;
+}
+
+.prose .steps li {
+  position: relative;
+  padding-left: 3rem;
+
+  font-size: 1rem;
+  line-height: 1.6;
+  letter-spacing: 0.015em;
+}
+
+/* the numbered circle */
+.prose .steps li::before {
+  content: counter(step) ".";
+  counter-increment: step;
+
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1rem;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--c-lime);
+  color: var(--c-black);
+
+  border-radius: 50%;
+}
+
 /* --- floating logo (outside header) --- */
 .brand {
   display: block;
@@ -150,15 +200,15 @@ a {
   box-shadow: none;
 }
 
-.site-header::after{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:-2px;
-  height:2px;
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
   background: var(--header-bg);
-  pointer-events:none;
+  pointer-events: none;
 }
 
 .site-header__inner {
@@ -380,9 +430,17 @@ a {
   line-height: 1.2;
   margin: 0 0 0.75rem 0;
   text-align: center;
+  padding-bottom: 1.5rem;
 }
 .section__lead {
   margin: 0 0 1rem 0;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.section__lead--left {
+  text-align: left;
+  padding-left: 1rem;
 }
 
 .card {
@@ -464,5 +522,11 @@ a {
 
   .section__title {
     font-size: 2rem;
+  }
+
+  .section__lead {
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    line-height: 1.6;
   }
 }
