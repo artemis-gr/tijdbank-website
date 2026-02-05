@@ -1,70 +1,122 @@
 (() => {
   const root = document.documentElement;
   const header = document.querySelector(".site-header");
+  const menu = document.querySelector("details.menu");
   const sections = [...document.querySelectorAll("main section[data-bg]")];
 
   if (!header || sections.length === 0) return;
 
-  const items = sections.map((section) => ({
-    section,
-    heading: section.querySelector("h1, h2, h3") || section, // fallback
-  }));
+  const mqDesktop = window.matchMedia("(min-width: 720px)");
 
-  const getSnapOffset = () => {
+  let lockToken = 0;
+  const lockFor = (ms) => {
+    const t = ++lockToken;
+    window.setTimeout(() => {
+      if (lockToken === t) lockToken = 0;
+    }, ms);
+  };
+  const isLocked = () => lockToken !== 0;
+
+  let headerH = 0;
+  let snapOffset = 0;
+
+  const readSnapOffset = () => {
     const v = getComputedStyle(root).getPropertyValue("--snap-offset").trim();
     const n = parseFloat(v);
-    return Number.isFinite(n) ? n : 0;
+    snapOffset = Number.isFinite(n) ? n : 0;
   };
 
-  // Returns BOTH: the real header height and the clamped one
-  const setHeaderHeightVar = () => {
+  const measureHeader = () => {
     const measured = Math.ceil(header.getBoundingClientRect().height);
-    const clamped = Math.min(measured, 120); // snap/anchor offset you like
-    root.style.setProperty("--header-h", `${clamped}px`);
-    return { measured, clamped };
+    headerH = Math.min(measured, 120);
+    root.style.setProperty("--header-h", `${headerH}px`);
   };
 
-  const setHeaderColorFromSection = (section) => {
-    const cssVarName = section.getAttribute("data-bg");
-    const color = getComputedStyle(root).getPropertyValue(cssVarName).trim();
-    if (color) root.style.setProperty("--header-bg", color);
+  const resolveBgFromSection = (section) => {
+    if (!section) return "var(--c-grey)";
+
+    const raw = (section.getAttribute("data-bg") || "").trim();
+    if (!raw) return "var(--c-grey)";
+
+    if (raw.startsWith("var(")) return raw;
+
+    if (raw.startsWith("--")) {
+      const val = getComputedStyle(root).getPropertyValue(raw).trim();
+      return val || `var(${raw})`; 
+    }
+
+    return raw;
   };
 
-  const setActiveFromScroll = () => {
-    const { measured, clamped } = setHeaderHeightVar();
-    const snapOffset = getSnapOffset();
+  const setActiveNavLink = (section) => {
+    const id = section?.id === "welkom" ? "wat" : section?.id;
+    if (!id) return;
+    document.querySelectorAll(".nav a").forEach((a) => {
+      a.classList.toggle("is-active", a.getAttribute("href") === `#${id}`);
+    });
+  };
 
-    // Use the SAME line your snapping/click-scroll uses:
-    // (clamped is your "effective header height", e.g. 120px)
-    const probeY = clamped + snapOffset + 2;
+  const getActiveSectionByProbe = () => {
+    const probeY = headerH + snapOffset + 2;
 
     let active = sections[0];
     for (const s of sections) {
       if (s.getBoundingClientRect().top <= probeY) active = s;
     }
-
-    setHeaderColorFromSection(active);
+    return active;
   };
-  // init
-  setActiveFromScroll();
 
-  // scroll (rAF throttle)
+  const applyHeaderAndMenuBg = (section) => {
+    const sectionBg = resolveBgFromSection(section);
+    root.style.setProperty("--menu-bg", sectionBg);
+    root.style.setProperty("--header-bg", sectionBg);
+  };
+
+  // --- sync ---
+  let lastActiveId = "";
+
+  const sync = () => {
+    if (isLocked()) return;
+
+    const active = getActiveSectionByProbe();
+    const activeId = active?.id || "";
+
+    if (!mqDesktop.matches && activeId === lastActiveId) return;
+
+    lastActiveId = activeId;
+    applyHeaderAndMenuBg(active);
+    setActiveNavLink(active);
+  };
+
+  // --- scroll handling ---
   let ticking = false;
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        setActiveFromScroll();
-        ticking = false;
-      });
-    },
-    { passive: true },
-  );
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      sync();
+      ticking = false;
+    });
+  };
 
-  // click: set header color immediately to the target section
+  const bindScroll = () => {
+    window.removeEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+  };
+
+  const applyMode = () => {
+    measureHeader();
+    readSnapOffset();
+    bindScroll();
+    lastActiveId = "";
+    sync();
+  };
+
+  applyMode();
+
   document.addEventListener("click", (e) => {
+    if (menu?.open && !menu.contains(e.target)) menu.open = false;
+
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
 
@@ -81,23 +133,47 @@
       ? target
       : target.closest("section[data-bg]");
 
-    if (section) setHeaderColorFromSection(section);
+    if (section) {
+      applyHeaderAndMenuBg(section);
+      setActiveNavLink(section);
+      lastActiveId = section.id || "";
+      lockFor(380);
+    }
 
-    const menu = document.querySelector("details.menu");
     if (menu) menu.open = false;
 
-    // --- deterministic scroll (respects your offset) ---
-    const { clamped } = setHeaderHeightVar(); // the 120px cap you like
-    const snapOffset = getSnapOffset(); // your CSS --snap-offset
+    measureHeader();
+    readSnapOffset();
+
+    const EPS = 4; 
     const y =
       window.scrollY +
       target.getBoundingClientRect().top -
-      (clamped + snapOffset);
+      (headerH + snapOffset) +
+      EPS;
 
-    window.scrollTo({ top: y, behavior: "auto" }); // use "smooth" if you want
-    requestAnimationFrame(() => requestAnimationFrame(setActiveFromScroll));
+    window.scrollTo({ top: y, behavior: "auto" });
+
+    window.setTimeout(() => {
+      lastActiveId = "";
+      sync();
+    }, 420);
   });
 
-  window.addEventListener("resize", setActiveFromScroll);
-  new ResizeObserver(setActiveFromScroll).observe(header);
+  // ESC closes menu
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menu?.open) menu.open = false;
+  });
+
+  // Keep menu bg correct when opening
+  menu?.addEventListener("toggle", () => {
+    if (menu.open) {
+      const active = getActiveSectionByProbe();
+      applyHeaderAndMenuBg(active);
+    }
+  });
+
+  mqDesktop.addEventListener?.("change", applyMode);
+  window.addEventListener("resize", applyMode);
+  new ResizeObserver(applyMode).observe(header);
 })();
