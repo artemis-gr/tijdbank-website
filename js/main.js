@@ -72,7 +72,6 @@
     root.style.setProperty("--header-bg", sectionBg);
   };
 
-  // --- sync ---
   let lastActiveId = "";
 
   const sync = () => {
@@ -88,7 +87,6 @@
     setActiveNavLink(active);
   };
 
-  // --- scroll handling ---
   let ticking = false;
   const onScroll = () => {
     if (ticking) return;
@@ -165,7 +163,6 @@
     if (e.key === "Escape" && menu?.open) menu.open = false;
   });
 
-  // Keep menu bg correct when opening
   menu?.addEventListener("toggle", () => {
     if (menu.open) {
       const active = getActiveSectionByProbe();
