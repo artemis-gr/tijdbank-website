@@ -50,6 +50,7 @@
   --max-text: 70rem;
   --max-prose: 40ch;
   --max-prose-ol: 45ch;
+  --lead-indent: 1rem;
 
   /* scroll */
   --snap-offset: 0px;
@@ -131,6 +132,10 @@ a {
   counter-reset: step;
 }
 
+.prose .steps--plain {
+  counter-reset: step;
+}
+
 .prose .steps li {
   position: relative;
   padding-left: 3rem;
@@ -138,6 +143,10 @@ a {
   font-size: 1rem;
   line-height: 1.6;
   letter-spacing: 0.015em;
+}
+
+.prose .steps--plain li {
+  padding-left: 2rem;
 }
 
 /* the numbered circle */
@@ -160,6 +169,31 @@ a {
   color: var(--c-black);
 
   border-radius: 50%;
+}
+
+.prose .steps--plain li::before {
+  content: none;
+}
+
+/* dots variant */
+.prose .steps--dots {
+  counter-reset: none; /* just to be explicit */
+}
+
+.prose .steps--dots li {
+  padding-left: calc(var(--lead-indent) + 1.5rem); /* inner indent */
+}
+
+.prose .steps--dots li::before {
+  left: var(--lead-indent);
+  top: 0.6em;
+
+  width: 0.2rem;
+  height: 0.2rem;
+  background: currentColor;
+  border-radius: 50%;
+  content: "";
+  position: absolute;
 }
 
 /* --- floating logo (outside header) --- */
@@ -186,7 +220,7 @@ a {
 
 /* floating logo size (mobile) */
 .brand--floating .brand__img {
-  height: 120px;
+  height: 100px;
   max-width: 210px;
 }
 
@@ -440,7 +474,29 @@ a {
 
 .section__lead--left {
   text-align: left;
-  padding-left: 1rem;
+  padding-left: var(--lead-indent);
+}
+
+.section__lead--big {
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  line-height: 1.2;
+  font-weight: 400;
+}
+
+.section__lead--bigger {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: normal;
+}
+
+.section__lead--white {
+  color: var(--c-white);
+}
+
+.section__lead--lime {
+  color: var(--c-lime);
 }
 
 .card {
@@ -528,5 +584,17 @@ a {
     font-size: 1.1rem;
     letter-spacing: 0.15em;
     line-height: 1.6;
+  }
+
+  .section__lead--big {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    letter-spacing: 0.2em;
+  }
+  .section__lead--bigger {
+    font-size: 2rem;
+    line-height: 1.2;
+    letter-spacing: 0.05em;
+    padding-top: 5rem;
   }
 }
