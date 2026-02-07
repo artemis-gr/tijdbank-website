@@ -513,6 +513,7 @@ a {
   padding: 0.75rem;
   background: var(--c-white);
   border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
 /* --- desktop breakpoint --- */
